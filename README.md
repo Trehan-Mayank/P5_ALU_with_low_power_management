@@ -34,6 +34,6 @@ vcs -full64 -sverilog top.v ALU.v PMU.v tb.v -upf top.upf -debug_access+all
 ./simv
 
 ---------------------------------------------------------------------------
-<img width="1157" height="1024" alt="image" src="https://github.com/user-attachments/assets/0e297ba3-044b-4e17-a4e8-fced01da44dd" />
+![673c22d5-ce82-46f1-9e40-6c97a2495c26](https://github.com/user-attachments/assets/3b76525a-6eda-49c6-a44a-c9878c997e06)
 
 Block Diagram of Design with PMU (Power Management Unit) that controls the low power strategies according to idle signal. Causing ALU to shutdown during no usage and inputs and outputs will be isolated to prevent 'x' propagation.
