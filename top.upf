@@ -1,0 +1,42 @@
+# Hierarchical UPFs
+
+set_design_top top
+set_design_attributes -models {ALU} -is_soft_macro TRUE
+
+# Create power ports
+create_supply_port VDD
+create_supply_port VSS
+
+# Create power nets
+create_supply_net VDD
+create_supply_net VSS
+
+#CSN
+connect_supply_net VDD -ports {VDD}
+connect_supply_net VSS -ports {VSS}
+
+create_supply_set SS_TOP -function {power VDD} -funtion {ground VSS}
+
+# Top domain (always-on)
+create_power_domain PD_TOP -include_scope
+set_domain_supply_net PD_TOP -primary_power_net VDD -primary_ground_net VSS 
+
+# NETS FOR PSW
+create_supply_net VDD_PSW
+create_supply_net VSS_PSW
+
+# PSW
+create_power_switch PSW_VDD -domain PD_TOP \
+    -input_supply_port {PSW_IN VDD} \
+    -output_supply_port {PSW_OUT VDD_PSW} \
+    -control_port {PSW_CTRL psw_ctrl[0]} \
+    -on_state {PSW_VDD_ON PSW_IN HIGH} \
+    -off_state {PSW_VDD_OFF HIGH} 
+
+# ALU instance loading (switchable)
+load_upf alu.upf -scope inst_ALU
+
+# PSW controlled Supply for ALU to turn off when idle
+connect_supply_net VDD_PSW -ports inst_ALU/VDD
+connect_supply_net VDD_PSW -ports inst_ALU/VDD_AO
+connect_supply_net VSS -ports inst_ALU/VDD

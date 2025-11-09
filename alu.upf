@@ -1,0 +1,43 @@
+# Hierarchical UPFs
+
+# Create power ports
+create_supply_port VDD
+create_supply_port VSS
+create_supply_port VDD_AO
+
+# Create power nets
+create_supply_net VDD
+create_supply_net VSS
+create_supply_net VDD_AO
+
+#CSN
+connect_supply_net VDD -ports {VDD}
+connect_supply_net VSS -ports {VSS}
+connect_supply_net VDD_AO -ports {VDD_AO}
+
+create_supply_set SS_ALU -function {power VDD} -funtion {ground VSS}
+create_supply_set SS_ALU_AO -function {power VDD_AO} -funtion {ground VSS}
+
+# Top domain (always-on)
+create_power_domain PD_ALU -include_scope
+set_domain_supply_net PD_ALU -primary_power_net VDD -primary_ground_net VSS
+
+#ISO STRATEGY
+set_isolation ISO_ALU_IN \
+    -domain PD_ALU \
+    -clamp_value z \
+    -applies_to inputs \
+    -isolation_signal iso_ctrl[0] \
+    -isolation_sense high \
+    -location self \
+    -isolation_supply_set SS_ALU_AO
+
+#ISO STRATEGY
+set_isolation ISO_ALU_OUT \
+    -domain PD_ALU \
+    -clamp_value 0 \
+    -applies_to outputs \
+    -isolation_signal iso_ctrl[1] \
+    -isolation_sense high \
+    -location self \
+    -isolation_supply_set SS_ALU_AO
